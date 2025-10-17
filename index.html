@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Leitor de Documentos</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1>Meu Leitor de Documentos</h1>
+        <nav>
+            <label for="file-input" class="file-label">Escolher Arquivo (.txt ou .pdf)</label>
+            <input type="file" id="file-input" accept=".txt,.pdf">
+        </nav>
+        </header>
+
+    <main id="conteudo-leitura">
+        <p class="aviso">Por favor, escolha um arquivo para iniciar a leitura.</p>
+    </main>
+
+    <footer>
+        <p>Leitor de documentos pessoal</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+    
+    <script src="script.js"></script>
+</body>
+</html>
