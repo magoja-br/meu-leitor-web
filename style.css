@@ -23,21 +23,41 @@ header {
     z-index: 1000;
 }
 h1 { margin: 0; font-size: 1.5rem; }
-
-/* NAV CONTAINER - Contém o seletor de arquivo e o player */
-nav { 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; /* Centraliza verticalmente o botão e o player */
-    gap: 1rem; 
-    margin-top: 1rem; 
-    flex-wrap: wrap; /* Permite que os itens quebrem a linha se não couberem */
-}
-
+nav { display: flex; justify-content: center; gap: 1rem; margin-top: 1rem; }
 main { max-width: 800px; margin: 2rem auto; padding: 1rem; background-color: var(--cor-fundo); border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
 
-/* Estilo para o botão de escolher arquivo */
-input[type="file"] { display: none; }
+#configuracoes-audio {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+#configuracoes-audio label {
+    font-size: 0.9rem;
+    margin-right: 0.5rem;
+}
+#voz-select {
+    background-color: white;
+    color: var(--cor-primaria);
+    border: 1px solid white;
+    border-radius: 4px;
+    padding: 0.4rem;
+    font-size: 0.9rem;
+}
+#velocidade-slider {
+    width: 120px;
+    accent-color: var(--cor-primaria);
+}
+#velocidade-valor {
+    font-weight: bold;
+    min-width: 40px;
+}
+
+input[type="file"] {
+    display: none;
+}
 .file-label {
     background-color: white;
     color: var(--cor-primaria);
@@ -46,79 +66,59 @@ input[type="file"] { display: none; }
     cursor: pointer;
     font-weight: bold;
     transition: background-color 0.2s;
-    /* Adicionado para que o botão não encolha em telas pequenas */
-    flex-shrink: 0; 
 }
-.file-label:hover { background-color: #e0e0e0; }
+.file-label:hover {
+    background-color: #e0e0e0;
+}
 
-/* Estilos do player */
 .player-controls {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 1rem;
-    margin: 0.5rem 0; /* Ajustado para ser mais compacto */
-    flex-shrink: 0; 
+    margin-top: 1rem;
 }
 .player-button {
     background-color: rgba(255, 255, 255, 0.9);
     color: var(--cor-primaria);
     border: none;
     border-radius: 50%;
-    width: 40px; /* Reduzido o tamanho do botão */
-    height: 40px; /* Reduzido o tamanho do botão */
-    font-size: 1.2rem; /* Reduzido o tamanho do ícone */
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
     transition: background-color 0.2s;
 }
-.player-button:hover { background-color: white; }
-
+.player-button:hover:not(:disabled) {
+    background-color: white;
+}
+.player-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
 .aviso { text-align: center; color: #777; font-style: italic; }
 
-/* Parágrafos do texto e destaque de leitura */
 .paragrafo {
     margin-bottom: 1em;
     padding: 5px;
     border-radius: 4px;
     transition: background-color 0.3s;
-    cursor: pointer;
+    cursor: pointer; /* Indica que o parágrafo é clicável */
 }
-.paragrafo:hover { background-color: #f0f0f0; }
-.lendo-agora { background-color: var(--cor-destaque); }
+.paragrafo:hover {
+    background-color: #f0f0f0; /* Efeito sutil ao passar o mouse */
+}
+.lendo-agora {
+    background-color: var(--cor-destaque);
+}
 
 footer { text-align: center; padding: 1rem; color: #888; font-size: 0.9rem; }
-
-/* --- SEÇÃO DE OTIMIZAÇÃO PARA CELULARES (menos de 600px) --- */
 @media (max-width: 600px) {
-    header {
-        padding: 0.5rem; /* Reduz o padding do cabeçalho */
-    }
-    h1 {
-        font-size: 1.2rem; /* Reduz o tamanho do título */
-        margin-bottom: 0.5rem;
-    }
-    nav { 
-        flex-direction: row; /* Mantém na mesma linha, mas com o flex-wrap ativo */
-        margin-top: 0;
-        justify-content: space-around; /* Distribui os itens para economizar espaço */
-        gap: 0.5rem;
-    }
-    
-    /* Faz o botão de upload ocupar toda a largura da nav, e o player em baixo */
-    .file-label {
-        width: 100%;
-        margin-bottom: 0.5rem;
-        box-sizing: border-box; /* Garante que o padding não aumente o tamanho total */
-    }
-
-    /* O player fica menor e centralizado */
-    #player-container {
-        margin-top: 0;
-        width: 100%;
-    }
-    
-    main { margin: 1rem 0.5rem; padding: 0.5rem; }
+    main { margin: 1rem; padding: 0.5rem; }
+    h1 { font-size: 1.2rem; }
+    #configuracoes-audio { flex-direction: column; gap: 0.5rem; }
+    #velocidade-slider { width: 100%; }
 }
