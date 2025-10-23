@@ -1,9 +1,10 @@
 :root {
-    --cor-primaria: #00695c; /* Um verde escuro, para diferenciar */
+    --cor-primaria: #00695c;
     --cor-secundaria: #f0f0f0;
     --cor-texto: #333;
     --cor-fundo: #ffffff;
     --cor-destaque: #fff59d;
+    --cor-voz-selecionada: #e0f7fa;
 }
 body {
     font-family: 'Roboto', sans-serif;
@@ -11,6 +12,7 @@ body {
     background-color: var(--cor-secundaria);
     color: var(--cor-texto);
     line-height: 1.6;
+    box-sizing: border-box;
 }
 header {
     background-color: var(--cor-primaria);
@@ -21,11 +23,23 @@ header {
     position: sticky;
     top: 0;
     z-index: 1000;
+    transition: opacity 0.5s ease;
+}
+header.hidden {
+    opacity: 0;
+    pointer-events: none;
 }
 h1 { margin: 0; font-size: 1.5rem; }
 nav { display: flex; justify-content: center; gap: 1rem; margin-top: 1rem; }
-main { max-width: 800px; margin: 2rem auto; padding: 1rem; background-color: var(--cor-fundo); border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-
+main { 
+    max-width: 800px; 
+    margin: 2rem auto; 
+    padding: 1rem; 
+    background-color: var(--cor-fundo); 
+    border-radius: 8px; 
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+    min-height: calc(100vh - 4rem);
+}
 #configuracoes-audio {
     display: flex;
     justify-content: center;
@@ -45,6 +59,11 @@ main { max-width: 800px; margin: 2rem auto; padding: 1rem; background-color: var
     border-radius: 4px;
     padding: 0.4rem;
     font-size: 0.9rem;
+    min-width: 200px;
+    transition: background-color 0.3s ease;
+}
+#voz-select:focus, #voz-select.changed {
+    background-color: var(--cor-voz-selecionada);
 }
 #velocidade-slider {
     width: 120px;
@@ -54,7 +73,6 @@ main { max-width: 800px; margin: 2rem auto; padding: 1rem; background-color: var
     font-weight: bold;
     min-width: 40px;
 }
-
 input[type="file"] {
     display: none;
 }
@@ -70,7 +88,6 @@ input[type="file"] {
 .file-label:hover {
     background-color: #e0e0e0;
 }
-
 .player-controls {
     display: flex;
     justify-content: center;
@@ -99,26 +116,67 @@ input[type="file"] {
     opacity: 0.5;
     cursor: not-allowed;
 }
+.voltar-button {
+    background-color: rgba(255, 255, 255, 0.9);
+    color: var(--cor-primaria);
+    border: none;
+    border-radius: 5px;
+    padding: 0.6rem 1rem;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    position: fixed !important;
+    bottom: 20px !important;
+    right: 20px !important;
+    left: auto !important;
+    z-index: 2000;
+    transition: background-color 0.2s;
+    box-sizing: border-box;
+    transform: none !important;
+}
+.voltar-button:hover:not(:disabled) {
+    background-color: white;
+}
+.voltar-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
 .aviso { text-align: center; color: #777; font-style: italic; }
-
 .paragrafo {
     margin-bottom: 1em;
     padding: 5px;
     border-radius: 4px;
     transition: background-color 0.3s;
-    cursor: pointer; /* Indica que o parágrafo é clicável */
+    cursor: pointer;
 }
 .paragrafo:hover {
-    background-color: #f0f0f0; /* Efeito sutil ao passar o mouse */
+    background-color: #f0f0f0;
 }
 .lendo-agora {
     background-color: var(--cor-destaque);
 }
-
-footer { text-align: center; padding: 1rem; color: #888; font-size: 0.9rem; }
+footer { 
+    text-align: center; 
+    padding: 1rem; 
+    color: #888; 
+    font-size: 0.9rem; 
+}
 @media (max-width: 600px) {
     main { margin: 1rem; padding: 0.5rem; }
     h1 { font-size: 1.2rem; }
     #configuracoes-audio { flex-direction: column; gap: 0.5rem; }
     #velocidade-slider { width: 100%; }
+    #voz-select { min-width: 150px; }
+    .voltar-button {
+        bottom: 10px !important;
+        right: 10px !important;
+        left: auto !important;
+        padding: 0.5rem 0.8rem;
+        font-size: 0.9rem;
+    }
+    .player-button {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
 }
