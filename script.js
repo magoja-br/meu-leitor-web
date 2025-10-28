@@ -713,7 +713,7 @@ document.addEventListener('DOMContentLoaded', () => {
         voice: vozAtual,
         speed: velocidadeAtual
       };
-      const backendUrl = 'http://localhost:3000/synthesize'; // URL do backend
+      const backendUrl = 'https://meu-proxy-tts.onrender.com/synthesize'; // URL do backend
 
       return fetch(backendUrl, {
         method: "POST",
