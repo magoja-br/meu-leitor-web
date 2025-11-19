@@ -24,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let velocidadeAtual = 1.00;
     let vozAtual = 'pt-BR-Chirp3-HD-Algieba';
     let nomeArquivoAtual = '';
-    let requisicaoEmAndamento = false; // NOVO: Previne múltiplas requisições
 
     // Cache de áudio
     const audioCache = new Map();
@@ -288,7 +287,6 @@ document.addEventListener('DOMContentLoaded', () => {
             estadoLeitura = 'tocando';
             if (audioAtual && audioAtual.paused && !isAudioPlaying) {
                 audioAtual.play();
-                isAudioPlaying = true;
             } else {
                 lerProximoParagrafo();
             }
@@ -301,23 +299,18 @@ document.addEventListener('DOMContentLoaded', () => {
             isAudioPlaying = false;
         }
         estadoLeitura = 'pausado';
-        const btn = document.getElementById('play-pause-btn');
-        if (btn) btn.innerHTML = '▶️';
+        document.getElementById('play-pause-btn').innerHTML = '▶️';
         salvarProgresso();
     }
 
     function pararLeitura(resetarIndice = false) {
-        // Para qualquer áudio em execução
         if (audioAtual) {
             audioAtual.pause();
             audioAtual.onended = null;
-            audioAtual.onerror = null;
             audioAtual.src = '';
             audioAtual = null;
+            isAudioPlaying = false;
         }
-        
-        isAudioPlaying = false;
-        requisicaoEmAndamento = false;
 
         const paragrafoLendo = document.querySelector('.lendo-agora');
         if (paragrafoLendo) {
@@ -339,14 +332,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function lerProximoParagrafo() {
-        // Previne múltiplas chamadas simultâneas
-        if (requisicaoEmAndamento || isAudioPlaying) {
-            return;
-        }
-
         // Remove o destaque do parágrafo anterior, se houver
-        const paragrafosComDestaque = document.querySelectorAll('.lendo-agora');
-        paragrafosComDestaque.forEach(p => p.classList.remove('lendo-agora'));
+        if (indiceParagrafoAtual > 0 && paragrafosDoTexto[indiceParagrafoAtual - 1]) {
+            paragrafosDoTexto[indiceParagrafoAtual - 1].classList.remove('lendo-agora');
+        }
 
         // Verifica se a leitura deve parar (fim do texto ou pausado pelo usuário)
         if (indiceParagrafoAtual >= paragrafosDoTexto.length || estadoLeitura !== 'tocando') {
@@ -371,7 +360,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const onAudioEnd = () => {
                 isAudioPlaying = false;
-                requisicaoEmAndamento = false;
                 indiceChunkAtual++;
                 
                 // Se terminou todos os chunks do parágrafo, avança para o próximo
@@ -383,11 +371,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 salvarProgresso();
-                
-                // Só continua se ainda estiver no modo "tocando"
-                if (estadoLeitura === 'tocando') {
-                    lerProximoParagrafo();
-                }
+                lerProximoParagrafo();
             };
 
             tocarAudio(textoChunk, onAudioEnd);
@@ -403,46 +387,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function tocarAudio(texto, onEndedCallback) {
-        // Previne múltiplas requisições simultâneas
-        if (requisicaoEmAndamento || isAudioPlaying) {
-            return;
-        }
-
-        // Para qualquer áudio anterior
-        if (audioAtual) {
-            audioAtual.pause();
-            audioAtual.onended = null;
-            audioAtual.onerror = null;
-            audioAtual.src = '';
-            audioAtual = null;
+        if (isAudioPlaying) {
+            pararLeitura(false);
         }
 
         const cacheKey = `${texto}_${vozAtual}_${velocidadeAtual}`;
         const isQuestion = texto.trim().endsWith('?') && texto.length < 50;
         
-        // Verifica cache
         if (!isQuestion && audioCache.has(cacheKey)) {
             audioAtual = new Audio(audioCache.get(cacheKey));
             audioAtual.onended = onEndedCallback;
-            audioAtual.onerror = (e) => {
-                console.error('Erro ao tocar áudio do cache:', e);
-                isAudioPlaying = false;
-                requisicaoEmAndamento = false;
-                onEndedCallback();
-            };
             isAudioPlaying = true;
-            try {
-                await audioAtual.play();
-            } catch (e) {
-                console.error('Erro ao tocar áudio:', e);
-                isAudioPlaying = false;
-                onEndedCallback();
-            }
+            audioAtual.play();
             return;
         }
-
-        // Marca que há uma requisição em andamento
-        requisicaoEmAndamento = true;
 
         try {
             const response = await fetch(backendUrl, {
@@ -464,35 +422,17 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.audioContent) {
                 const audioSrc = 'data:audio/wav;base64,' + data.audioContent;
                 if (!isQuestion) audioCache.set(cacheKey, audioSrc);
-                
                 audioAtual = new Audio(audioSrc);
                 audioAtual.onended = onEndedCallback;
-                audioAtual.onerror = (e) => {
-                    console.error('Erro ao tocar áudio:', e);
-                    isAudioPlaying = false;
-                    requisicaoEmAndamento = false;
-                    onEndedCallback();
-                };
-                
                 isAudioPlaying = true;
-                requisicaoEmAndamento = false;
-                
-                try {
-                    await audioAtual.play();
-                } catch (e) {
-                    console.error('Erro ao tocar áudio:', e);
-                    isAudioPlaying = false;
-                    onEndedCallback();
-                }
+                audioAtual.play();
             } else {
                 console.error('Erro na resposta da API:', data);
-                requisicaoEmAndamento = false;
                 alert('Não foi possível gerar o áudio. Verifique o backend no Render.com');
                 pararLeitura(true);
             }
         } catch (error) {
             console.error('Erro ao chamar a API:', error);
-            requisicaoEmAndamento = false;
             alert('Ocorreu um erro ao tentar gerar o áudio. Verifique sua conexão ou o backend no Render.com');
             pararLeitura(true);
         }

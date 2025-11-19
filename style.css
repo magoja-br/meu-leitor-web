@@ -38,11 +38,21 @@ h1 {
     font-size: 1.5rem; 
 }
 
+/* Novo Container para Agrupar Controles e otimizar espaço */
+#header-controls {
+    display: flex;
+    flex-wrap: wrap; /* Permite quebrar em telas menores */
+    justify-content: center;
+    align-items: center;
+    gap: 1rem; /* Espaçamento entre os grupos de controle */
+    margin-top: 1rem;
+}
+
 nav { 
     display: flex; 
     justify-content: center; 
     gap: 1rem; 
-    margin-top: 1rem; 
+    /* Removido o margin-top, agora controlado por #header-controls */
 }
 
 main { 
@@ -97,7 +107,7 @@ main {
     justify-content: center;
     align-items: center;
     gap: 1rem;
-    margin-top: 1rem;
+    /* Removido o margin-top, agora controlado por #header-controls */
     flex-wrap: wrap;
 }
 
@@ -149,7 +159,7 @@ input[type="file"] {
     justify-content: center;
     align-items: center;
     gap: 1rem;
-    margin-top: 1rem;
+    margin-top: 1rem; /* Mantém a margem no topo para separá-lo dos outros controles */
 }
 
 .player-button {
@@ -214,7 +224,13 @@ footer {
     box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
 }
 
+/* OTIMIZAÇÃO PARA MOBILE */
 @media (max-width: 600px) {
+    
+    header {
+        padding: 0.8rem 1rem; /* Reduz o padding vertical do header */
+    }
+
     main { 
         margin: 1rem; 
         padding: 0.5rem; 
@@ -222,13 +238,41 @@ footer {
     h1 { 
         font-size: 1.2rem; 
     }
+    
+    /* Força os controles do header para empilhar verticalmente e reduzir espaçamento */
+    #header-controls {
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+    }
+    
+    nav {
+        gap: 0.5rem;
+    }
+    
+    .barra-progresso-container {
+        width: 100%; /* Garante que ocupe a largura total */
+        margin: 5px 0; /* Reduz margem vertical */
+    }
+
     #configuracoes-audio { 
         flex-direction: column; 
         gap: 0.5rem; 
+        width: 100%;
     }
+    
+    #configuracoes-audio label {
+        margin-right: 0;
+    }
+    
     #velocidade-slider { 
         width: 100%; 
     }
+    
+    .player-controls {
+        margin-top: 0.8rem; /* Pequena margem para separar os botões do player */
+    }
+
     .player-button {
         width: 45px;
         height: 45px;

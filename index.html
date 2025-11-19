@@ -12,34 +12,36 @@
 <body>
     <header>
         <h1>Meu Leitor de Documentos</h1>
-        <nav>
-            <label for="file-input" class="file-label">Escolher Arquivo (.txt, .pdf, .docx)</label>
-            <input type="file" id="file-input" accept=".txt,.pdf,.docx">
-        </nav>
         
-        <!-- Barra de Progresso -->
-        <div id="barra-progresso-container" class="barra-progresso-container" style="display: none;">
-            <div class="progresso-info">
-                <span id="progresso-texto">Parágrafo 0 de 0</span>
-                <span id="progresso-percentual">0%</span>
+        <div id="header-controls">
+            <nav>
+                <label for="file-input" class="file-label">Escolher Arquivo (.txt, .pdf, .docx)</label>
+                <input type="file" id="file-input" accept=".txt,.pdf,.docx">
+            </nav>
+            
+            <div id="barra-progresso-container" class="barra-progresso-container" style="display: none;">
+                <div class="progresso-info">
+                    <span id="progresso-texto">Parágrafo 0 de 0</span>
+                    <span id="progresso-percentual">0%</span>
+                </div>
+                <div class="barra-progresso">
+                    <div id="barra-progresso-preenchida" class="barra-progresso-preenchida"></div>
+                </div>
             </div>
-            <div class="barra-progresso">
-                <div id="barra-progresso-preenchida" class="barra-progresso-preenchida"></div>
+            
+            <div id="configuracoes-audio" class="configuracoes-audio">
+                <label for="voz-select">Voz:</label>
+                <select id="voz-select">
+                    <option value="pt-BR-Chirp3-HD-Algieba">Masculina (Chirp3-HD-Algieba)</option>
+                    <option value="pt-BR-Chirp3-HD-Achird">Masculina (Chirp3-HD-Achird)</option>
+                    <option value="pt-BR-Wavenet-A">Feminina (Wavenet-A)</option>
+                    <option value="pt-BR-Wavenet-D">Feminina (Wavenet-D)</option>
+                </select>
+                <label for="velocidade-slider">Velocidade: <span id="velocidade-valor">1.00</span>x</label>
+                <input type="range" id="velocidade-slider" min="0.25" max="2.00" step="0.05" value="1.00">
             </div>
         </div>
-        
-        <div id="configuracoes-audio" class="configuracoes-audio">
-            <label for="voz-select">Voz:</label>
-            <select id="voz-select">
-                <option value="pt-BR-Chirp3-HD-Algieba">Masculina (Chirp3-HD-Algieba)</option>
-                <option value="pt-BR-Chirp3-HD-Achird">Masculina (Chirp3-HD-Achird)</option>
-                <option value="pt-BR-Wavenet-A">Feminina (Wavenet-A)</option>
-                <option value="pt-BR-Wavenet-D">Feminina (Wavenet-D)</option>
-            </select>
-            <label for="velocidade-slider">Velocidade: <span id="velocidade-valor">1.00</span>x</label>
-            <input type="range" id="velocidade-slider" min="0.25" max="2.00" step="0.05" value="1.00">
-        </div>
-    </header>
+        </header>
 
     <main id="conteudo-leitura">
         <p class="aviso">Por favor, escolha um arquivo para iniciar a leitura.</p>
