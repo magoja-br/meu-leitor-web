@@ -36,18 +36,17 @@ header {
 
 /* Modo Leitura Compactado */
 .leitura-ativa {
-    /* MANTÉM: display flex para o layout geral */
     padding: 0.5rem 1rem;
     display: flex;
-    flex-direction: column; /* NOVO: Para mobile, forçamos empilhar itens principais */
+    flex-direction: column; 
     justify-content: center;
     align-items: center;
-    gap: 0.3rem; /* Espaçamento entre os itens empilhados */
+    gap: 0.3rem; 
 }
 
 .leitura-ativa h1 {
     font-size: 1.2rem;
-    text-align: center; /* Centraliza o título no modo compacto */
+    text-align: center; 
     margin: 0;
     width: 100%;
     order: 0;
@@ -59,8 +58,8 @@ header {
 
 .leitura-ativa .player-controls {
     margin-top: 0;
-    width: 100%; /* Ocupa a largura total para centralizar botões */
-    order: 2; /* Fica na parte inferior do cabeçalho compacto */
+    width: 100%; 
+    order: 2; 
 }
 
 /* Estilo para o Indicador de Parágrafo */
@@ -76,8 +75,8 @@ header {
 
 .leitura-ativa .indicador-paragrafo {
     display: block;
-    order: 1; /* Fica entre o título e os controles */
-    flex-grow: 0; /* Remove o crescimento para manter o texto centralizado */
+    order: 1; 
+    flex-grow: 0; 
     text-align: center;
     width: auto;
 }
@@ -315,14 +314,13 @@ footer {
         padding: 0.8rem 1rem;
     }
 
-    /* CORREÇÃO CRÍTICA: Força empilhamento vertical total no cabeçalho ativo */
+    /* CORREÇÃO PARA O PLAYER OCULTO */
     .leitura-ativa {
-        padding: 0.5rem 0.5rem;
+        padding: 0.5rem 0.5rem; /* Reduz o padding lateral para ganhar espaço */
         flex-direction: column; 
         gap: 0.2rem;
     }
 
-    /* Garantir que o título e indicador fiquem centrados e na sua própria "linha" superior */
     .leitura-ativa h1 {
         font-size: 1.1rem;
         text-align: center;
@@ -334,18 +332,18 @@ footer {
         width: auto;
     }
     
-    /* Faz os controles do player ocuparem a largura total e centraliza os botões */
+    /* Novo Ajuste Fino: Reduz o espaçamento e o tamanho dos botões do player para caber na maioria dos celulares */
     .leitura-ativa .player-controls {
         width: 100%;
-        gap: 0.5rem;
+        gap: 0.3rem; /* Espaçamento menor entre botões */
         justify-content: center;
         margin-top: 0;
     }
 
     .leitura-ativa .player-button {
-        width: 40px;
-        height: 40px;
-        font-size: 1.1rem;
+        width: 38px; /* Botões ligeiramente menores */
+        height: 38px;
+        font-size: 1rem; /* Ícone menor */
     }
     
     /* --- Controles em estado expandido (fora de leitura) --- */
