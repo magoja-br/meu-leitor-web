@@ -19,10 +19,15 @@
                 <input type="file" id="file-input" accept=".txt,.pdf,.docx">
             </nav>
             
+            <div id="navegacao-paragrafo">
+                <label for="paragrafo-input">Ir para Parágrafo:</label>
+                <input type="number" id="paragrafo-input" value="1" min="1"> 
+                <button id="ir-btn" class="player-button ir-btn-custom">Go</button>
+            </div>
+
             <div id="barra-progresso-container" class="barra-progresso-container" style="display: none;">
                 <div class="progresso-info">
                     <span id="progresso-texto">Parágrafo 0 de 0</span>
-                    <span id="progresso-percentual">0%</span>
                 </div>
                 <div class="barra-progresso">
                     <div id="barra-progresso-preenchida" class="barra-progresso-preenchida"></div>
@@ -41,6 +46,9 @@
                 <input type="range" id="velocidade-slider" min="0.25" max="2.00" step="0.05" value="1.00">
             </div>
         </div>
+
+        <span id="indicador-paragrafo" class="indicador-paragrafo"></span>
+
         </header>
 
     <main id="conteudo-leitura">

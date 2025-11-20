@@ -11,7 +11,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const barraProgressoContainer = document.getElementById('barra-progresso-container');
     const barraProgressoPreenchida = document.getElementById('barra-progresso-preenchida');
     const progressoTexto = document.getElementById('progresso-texto');
-    const progressoPercentual = document.getElementById('progresso-percentual');
+    
+    // Elementos de Navegação e Indicador
+    const paragrafoInput = document.getElementById('paragrafo-input');
+    const irBtn = document.getElementById('ir-btn');
+    const indicadorParagrafo = document.getElementById('indicador-paragrafo'); 
 
     // Variáveis de estado do player de áudio
     let indiceParagrafoAtual = 0;
@@ -33,10 +37,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Tamanho máximo do chunk em caracteres
     const TAMANHO_CHUNK = 1500;
+    
+    // Funções de controle do cabeçalho
+    function encolherCabecalho() {
+        cabecalho.classList.add('leitura-ativa');
+    }
 
+    function expandirCabecalho() {
+        cabecalho.classList.remove('leitura-ativa');
+    }
+    
     // Eventos principais
     fileInput.addEventListener('change', handleFileSelect);
-    areaLeitura.addEventListener('click', iniciarLeituraDePontoEspecifico);
+    areaLeitura.addEventListener('click', iniciarLeituraDePontoEspecifico); 
     vozSelect.addEventListener('change', (e) => {
         vozAtual = e.target.value;
         audioCache.clear();
@@ -46,6 +59,19 @@ document.addEventListener('DOMContentLoaded', () => {
         velocidadeValor.textContent = velocidadeAtual.toFixed(2);
         audioCache.clear();
     });
+    
+    // Evento para o botão IR
+    irBtn.addEventListener('click', navegarParaParagrafo);
+    
+    // Listener para impedir a entrada de caracteres inválidos (como '-')
+    if (paragrafoInput) {
+        paragrafoInput.addEventListener('keydown', (e) => {
+            // Impede as teclas 'e', '.', ',', '-', '+'
+            if (['e', '.', ',', '-', '+'].includes(e.key)) {
+                e.preventDefault();
+            }
+        });
+    }
 
     function handleFileSelect(event) {
         const file = event.target.files[0];
@@ -122,20 +148,17 @@ document.addEventListener('DOMContentLoaded', () => {
         while (inicio < texto.length) {
             let fim = inicio + TAMANHO_CHUNK;
 
-            // Se não chegou ao fim do texto, procura um ponto natural para quebrar
             if (fim < texto.length) {
-                // Procura por ponto final, vírgula ou espaço (nessa ordem de prioridade)
                 let pontoFinal = texto.lastIndexOf('.', fim);
                 let virgula = texto.lastIndexOf(',', fim);
                 let espaco = texto.lastIndexOf(' ', fim);
 
-                // Escolhe o ponto de quebra mais próximo do limite
-                if (pontoFinal > inicio && pontoFinal > fim - 200) {
-                    fim = pontoFinal + 1; // Inclui o ponto
+                if (pontoFinal > inicio && pontoFinal > fim - 200) { 
+                    fim = pontoFinal + 1;
                 } else if (virgula > inicio && virgula > fim - 200) {
-                    fim = virgula + 1; // Inclui a vírgula
+                    fim = virgula + 1;
                 } else if (espaco > inicio) {
-                    fim = espaco + 1; // Inclui o espaço
+                    fim = espaco + 1;
                 }
             }
 
@@ -147,12 +170,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function exibirTexto(texto) {
-        pararLeitura(true);
+        // CORREÇÃO: Usamos pararLeitura(true) aqui para garantir que o estado seja zerado 
+        // ao carregar um novo arquivo
+        pararLeitura(true); 
         areaLeitura.innerHTML = '';
         audioCache.clear();
         
         const painelControleAntigo = document.getElementById('player-container');
         if (painelControleAntigo) painelControleAntigo.remove();
+        
+        expandirCabecalho();
 
         const playerHtml = `
         <div id="player-container" class="player-controls">
@@ -164,7 +191,8 @@ document.addEventListener('DOMContentLoaded', () => {
         cabecalho.insertAdjacentHTML('beforeend', playerHtml);
         
         document.getElementById('play-pause-btn').addEventListener('click', tocarPausarLeitura);
-        document.getElementById('stop-btn').addEventListener('click', () => pararLeitura(true));
+        // CORREÇÃO: O botão STOP agora chama pararLeitura(false) para manter a memória.
+        document.getElementById('stop-btn').addEventListener('click', () => pararLeitura(false));
         document.getElementById('prev-btn').addEventListener('click', retrocederParagrafo);
         document.getElementById('next-btn').addEventListener('click', avancarParagrafo);
 
@@ -176,6 +204,12 @@ document.addEventListener('DOMContentLoaded', () => {
             areaLeitura.appendChild(p);
         });
         paragrafosDoTexto = areaLeitura.querySelectorAll('.paragrafo');
+        
+        // Define o valor máximo do input de parágrafo
+        if (paragrafoInput) {
+            paragrafoInput.max = paragrafosDoTexto.length;
+            paragrafoInput.value = 1;
+        }
         
         // Mostrar barra de progresso
         barraProgressoContainer.style.display = 'block';
@@ -192,9 +226,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const atual = indiceParagrafoAtual + 1;
         const percentual = total > 0 ? Math.round((atual / total) * 100) : 0;
 
+        // Atualiza a barra de progresso visível no modo expandido (apenas contagem)
         progressoTexto.textContent = `Parágrafo ${atual} de ${total}`;
-        progressoPercentual.textContent = `${percentual}%`;
         barraProgressoPreenchida.style.width = `${percentual}%`;
+        
+        // NOVO AJUSTE: Atualiza o indicador discreto no cabeçalho
+        if (estadoLeitura === 'parado' || estadoLeitura === 'pausado') {
+             // Mostra "Última leitura" quando parado ou pausado
+             indicadorParagrafo.textContent = `Última leitura: ${atual}/${total}`;
+        } else {
+             // Mostra apenas a contagem quando tocando
+             indicadorParagrafo.textContent = `${atual}/${total}`;
+        }
+        
+        // Atualiza o valor do input de parágrafo durante a leitura
+        if (paragrafoInput) {
+            paragrafoInput.value = atual;
+        }
     }
 
     function salvarProgresso() {
@@ -216,14 +264,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const progressoSalvo = localStorage.getItem(`progresso_${nomeArquivoAtual}`);
         if (progressoSalvo) {
             const progresso = JSON.parse(progressoSalvo);
-            indiceParagrafoAtual = progresso.paragrafo || 0;
+            
+            // Verifica se o parágrafo salvo é válido (não excede o tamanho do texto atual)
+            const novoIndiceParagrafo = Math.min(progresso.paragrafo || 0, paragrafosDoTexto.length - 1);
+            
+            indiceParagrafoAtual = novoIndiceParagrafo >= 0 ? novoIndiceParagrafo : 0;
             indiceChunkAtual = progresso.chunk || 0;
             
-            // Rolar até o parágrafo salvo
             if (paragrafosDoTexto[indiceParagrafoAtual]) {
                 paragrafosDoTexto[indiceParagrafoAtual].scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
             
+            // Inicializa o indicador de parágrafo com o ponto de memória
+            if (paragrafosDoTexto.length > 0) {
+                 indicadorParagrafo.textContent = `Última leitura: ${indiceParagrafoAtual + 1}/${paragrafosDoTexto.length}`;
+            }
+
             atualizarBarraProgresso();
         }
     }
@@ -237,6 +293,39 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function navegarParaParagrafo() {
+        if (paragrafosDoTexto.length === 0) {
+            alert("Nenhum arquivo carregado ou texto não encontrado.");
+            return;
+        }
+
+        const numeroDesejado = parseInt(paragrafoInput.value.trim());
+
+        // Validação de limites
+        if (isNaN(numeroDesejado) || numeroDesejado < 1 || numeroDesejado > paragrafosDoTexto.length) {
+            alert(`Por favor, insira um número entre 1 e ${paragrafosDoTexto.length}.`);
+            paragrafoInput.value = indiceParagrafoAtual + 1;
+            return;
+        }
+
+        const novoIndice = numeroDesejado - 1;
+
+        if (novoIndice !== indiceParagrafoAtual) {
+            pararLeitura(false); 
+            indiceParagrafoAtual = novoIndice; 
+            indiceChunkAtual = 0;
+            
+            paragrafosDoTexto[indiceParagrafoAtual].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            atualizarBotoesNavegacao();
+            atualizarBarraProgresso();
+            salvarProgresso();
+            tocarPausarLeitura(); 
+        } else if (estadoLeitura !== 'tocando') {
+            tocarPausarLeitura();
+        }
+    }
+
     function iniciarLeituraDePontoEspecifico(event) {
         const paragrafoClicado = event.target.closest('.paragrafo');
         if (!paragrafoClicado) return;
@@ -244,13 +333,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const novoIndice = Array.from(paragrafosDoTexto).indexOf(paragrafoClicado);
 
         if (novoIndice !== -1) {
-            pararLeitura(false);
-            indiceParagrafoAtual = novoIndice;
+            pararLeitura(false); 
+            indiceParagrafoAtual = novoIndice; 
             indiceChunkAtual = 0;
             atualizarBotoesNavegacao();
             atualizarBarraProgresso();
             salvarProgresso();
-            tocarPausarLeitura();
+            tocarPausarLeitura(); 
         }
     }
 
@@ -283,6 +372,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (estadoLeitura === 'tocando') {
             pausarLeitura();
         } else {
+            // Encolhe o cabeçalho ao iniciar/retomar a leitura
+            encolherCabecalho();
             btn.innerHTML = '⏸️';
             estadoLeitura = 'tocando';
             if (audioAtual && audioAtual.paused && !isAudioPlaying) {
@@ -290,6 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 lerProximoParagrafo();
             }
+            atualizarBarraProgresso(); // Atualiza o indicador para remover "Última leitura"
         }
     }
 
@@ -301,8 +393,10 @@ document.addEventListener('DOMContentLoaded', () => {
         estadoLeitura = 'pausado';
         document.getElementById('play-pause-btn').innerHTML = '▶️';
         salvarProgresso();
+        atualizarBarraProgresso(); // Atualiza o indicador para mostrar "Última leitura"
     }
 
+    // CORREÇÃO: Função pararLeitura não zera mais os índices, a menos que resetarIndice seja true.
     function pararLeitura(resetarIndice = false) {
         if (audioAtual) {
             audioAtual.pause();
@@ -312,49 +406,45 @@ document.addEventListener('DOMContentLoaded', () => {
             isAudioPlaying = false;
         }
 
-        const paragrafoLendo = document.querySelector('.lendo-agora');
-        if (paragrafoLendo) {
-            paragrafoLendo.classList.remove('lendo-agora');
-        }
+        document.querySelectorAll('.paragrafo').forEach(p => p.classList.remove('lendo-agora'));
 
         estadoLeitura = 'parado';
         const btn = document.getElementById('play-pause-btn');
         if (btn) btn.innerHTML = '▶️';
+        
+        // Expande o cabeçalho ao parar a leitura
+        expandirCabecalho();
 
         if (resetarIndice) {
+            // Zera o progresso APENAS se estiver carregando um NOVO arquivo (chamado em exibirTexto)
             indiceParagrafoAtual = 0;
             indiceChunkAtual = 0;
-            atualizarBotoesNavegacao();
             atualizarBarraProgresso();
+        } else {
+            // Se não for resetar (chamado pelo botão STOP), salva a posição atual
+            salvarProgresso();
+            atualizarBarraProgresso(); // Atualiza o indicador para mostrar "Última leitura"
         }
-        
-        salvarProgresso();
     }
 
     function lerProximoParagrafo() {
-        // Remove o destaque do parágrafo anterior, se houver
-        if (indiceParagrafoAtual > 0 && paragrafosDoTexto[indiceParagrafoAtual - 1]) {
-            paragrafosDoTexto[indiceParagrafoAtual - 1].classList.remove('lendo-agora');
-        }
+        document.querySelectorAll('.paragrafo').forEach(p => p.classList.remove('lendo-agora'));
 
-        // Verifica se a leitura deve parar (fim do texto ou pausado pelo usuário)
         if (indiceParagrafoAtual >= paragrafosDoTexto.length || estadoLeitura !== 'tocando') {
             pararLeitura(true);
             return;
         }
 
         const paragrafoAtual = paragrafosDoTexto[indiceParagrafoAtual];
-        paragrafoAtual.classList.add('lendo-agora');
+        paragrafoAtual.classList.add('lendo-agora'); 
         paragrafoAtual.scrollIntoView({ behavior: 'smooth', block: 'center' });
         
         const textoCompleto = paragrafoAtual.textContent;
         
-        // Divide o parágrafo em chunks se necessário
         if (indiceChunkAtual === 0) {
             chunksAtuais = dividirEmChunks(textoCompleto);
         }
         
-        // Verifica se ainda há chunks para ler no parágrafo atual
         if (indiceChunkAtual < chunksAtuais.length) {
             const textoChunk = chunksAtuais[indiceChunkAtual];
             
@@ -362,7 +452,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 isAudioPlaying = false;
                 indiceChunkAtual++;
                 
-                // Se terminou todos os chunks do parágrafo, avança para o próximo
                 if (indiceChunkAtual >= chunksAtuais.length) {
                     indiceParagrafoAtual++;
                     indiceChunkAtual = 0;
@@ -376,7 +465,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             tocarAudio(textoChunk, onAudioEnd);
         } else {
-            // Se não há mais chunks, avança para o próximo parágrafo
             indiceParagrafoAtual++;
             indiceChunkAtual = 0;
             atualizarBotoesNavegacao();
@@ -429,12 +517,12 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 console.error('Erro na resposta da API:', data);
                 alert('Não foi possível gerar o áudio. Verifique o backend no Render.com');
-                pararLeitura(true);
+                pausarLeitura();
             }
         } catch (error) {
             console.error('Erro ao chamar a API:', error);
             alert('Ocorreu um erro ao tentar gerar o áudio. Verifique sua conexão ou o backend no Render.com');
-            pararLeitura(true);
+            pausarLeitura();
         }
     }
 });

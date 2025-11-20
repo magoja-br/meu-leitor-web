@@ -31,28 +31,70 @@ header {
     position: sticky;
     top: 0;
     z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+/* Modo Leitura Compactado */
+.leitura-ativa {
+    padding: 0.5rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.leitura-ativa h1 {
+    font-size: 1.2rem;
+    text-align: left;
+    margin: 0;
+}
+
+.leitura-ativa #header-controls {
+    display: none;
+}
+
+.leitura-ativa .player-controls {
+    margin-top: 0;
+}
+
+/* Estilo para o Indicador de Parágrafo */
+.indicador-paragrafo {
+    display: none; /* Esconde por padrão, só aparece no modo .leitura-ativa */
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #fff;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.leitura-ativa .indicador-paragrafo {
+    display: block; /* Mostra no modo leitura ativa */
+    order: 1; 
+    flex-grow: 1; 
+    text-align: center;
 }
 
 h1 { 
     margin: 0; 
-    font-size: 1.5rem; 
+    font-size: 1.5rem;
+    order: 0; 
 }
 
-/* Novo Container para Agrupar Controles e otimizar espaço */
+/* Container Principal de Controles */
 #header-controls {
     display: flex;
-    flex-wrap: wrap; /* Permite quebrar em telas menores */
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    gap: 1rem; /* Espaçamento entre os grupos de controle */
+    gap: 1rem;
     margin-top: 1rem;
+    transition: height 0.3s ease, opacity 0.3s ease;
 }
 
 nav { 
     display: flex; 
     justify-content: center; 
     gap: 1rem; 
-    /* Removido o margin-top, agora controlado por #header-controls */
 }
 
 main { 
@@ -75,9 +117,14 @@ main {
     max-width: 600px;
 }
 
+.leitura-ativa .barra-progresso-container {
+    display: none !important;
+}
+
 .progresso-info {
     display: flex;
-    justify-content: space-between;
+    /* Centralizado sem a porcentagem */
+    justify-content: center; 
     margin-bottom: 8px;
     font-size: 0.9rem;
     color: white;
@@ -107,7 +154,6 @@ main {
     justify-content: center;
     align-items: center;
     gap: 1rem;
-    /* Removido o margin-top, agora controlado por #header-controls */
     flex-wrap: wrap;
 }
 
@@ -135,6 +181,28 @@ main {
     min-width: 40px;
 }
 
+/* Controle de Navegação por Parágrafo */
+#navegacao-paragrafo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#navegacao-paragrafo label {
+    font-size: 0.9rem;
+    color: white;
+}
+
+#paragrafo-input {
+    padding: 0.4rem;
+    border: none;
+    border-radius: 4px;
+    text-align: center;
+    color: var(--cor-primaria);
+    width: 60px;
+}
+
+
 input[type="file"] {
     display: none;
 }
@@ -159,7 +227,8 @@ input[type="file"] {
     justify-content: center;
     align-items: center;
     gap: 1rem;
-    margin-top: 1rem; /* Mantém a margem no topo para separá-lo dos outros controles */
+    margin-top: 1rem;
+    order: 2; 
 }
 
 .player-button {
@@ -176,6 +245,14 @@ input[type="file"] {
     align-items: center;
     transition: all 0.2s;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Estilo para o botão 'Go' (pequeno) */
+.player-button.ir-btn-custom {
+    width: 30px; 
+    height: 30px; 
+    font-size: 1rem; 
+    border-radius: 4px;
 }
 
 .player-button:hover:not(:disabled) {
@@ -228,7 +305,29 @@ footer {
 @media (max-width: 600px) {
     
     header {
-        padding: 0.8rem 1rem; /* Reduz o padding vertical do header */
+        padding: 0.8rem 1rem;
+    }
+
+    /* Ajuste para o modo leitura no mobile */
+    .leitura-ativa {
+        padding: 0.5rem 0.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .leitura-ativa .indicador-paragrafo {
+        font-size: 0.8rem;
+    }
+    
+    .leitura-ativa .player-controls {
+        gap: 0.5rem;
+    }
+    
+    .leitura-ativa .player-button {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
     }
 
     main { 
@@ -249,10 +348,15 @@ footer {
     nav {
         gap: 0.5rem;
     }
+
+    #navegacao-paragrafo {
+        width: 100%;
+        justify-content: center;
+    }
     
     .barra-progresso-container {
-        width: 100%; /* Garante que ocupe a largura total */
-        margin: 5px 0; /* Reduz margem vertical */
+        width: 100%;
+        margin: 5px 0;
     }
 
     #configuracoes-audio { 
@@ -270,7 +374,7 @@ footer {
     }
     
     .player-controls {
-        margin-top: 0.8rem; /* Pequena margem para separar os botões do player */
+        margin-top: 0.8rem;
     }
 
     .player-button {
