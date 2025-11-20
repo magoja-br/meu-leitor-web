@@ -58,7 +58,7 @@ header {
 
 /* Estilo para o Indicador de Parágrafo */
 .indicador-paragrafo {
-    display: none; /* Esconde por padrão, só aparece no modo .leitura-ativa */
+    display: none;
     font-size: 0.9rem;
     font-weight: bold;
     color: #fff;
@@ -68,7 +68,7 @@ header {
 }
 
 .leitura-ativa .indicador-paragrafo {
-    display: block; /* Mostra no modo leitura ativa */
+    display: block;
     order: 1; 
     flex-grow: 1; 
     text-align: center;
@@ -123,7 +123,6 @@ main {
 
 .progresso-info {
     display: flex;
-    /* Centralizado sem a porcentagem */
     justify-content: center; 
     margin-bottom: 8px;
     font-size: 0.9rem;
@@ -247,7 +246,7 @@ input[type="file"] {
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-/* Estilo para o botão 'Go' (pequeno) */
+/* Estilo para o botão 'Go' (pequeno) - Corrigido para sintaxe padrão */
 .player-button.ir-btn-custom {
     width: 30px; 
     height: 30px; 

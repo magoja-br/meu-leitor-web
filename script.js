@@ -170,8 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function exibirTexto(texto) {
-        // CORREÇÃO: Usamos pararLeitura(true) aqui para garantir que o estado seja zerado 
-        // ao carregar um novo arquivo
+        // Zera o estado ao carregar um novo arquivo
         pararLeitura(true); 
         areaLeitura.innerHTML = '';
         audioCache.clear();
@@ -191,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cabecalho.insertAdjacentHTML('beforeend', playerHtml);
         
         document.getElementById('play-pause-btn').addEventListener('click', tocarPausarLeitura);
-        // CORREÇÃO: O botão STOP agora chama pararLeitura(false) para manter a memória.
+        // O botão STOP agora chama pararLeitura(false) para manter a memória (última posição lida)
         document.getElementById('stop-btn').addEventListener('click', () => pararLeitura(false));
         document.getElementById('prev-btn').addEventListener('click', retrocederParagrafo);
         document.getElementById('next-btn').addEventListener('click', avancarParagrafo);
@@ -230,7 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
         progressoTexto.textContent = `Parágrafo ${atual} de ${total}`;
         barraProgressoPreenchida.style.width = `${percentual}%`;
         
-        // NOVO AJUSTE: Atualiza o indicador discreto no cabeçalho
+        // Atualiza o indicador discreto no cabeçalho
         if (estadoLeitura === 'parado' || estadoLeitura === 'pausado') {
              // Mostra "Última leitura" quando parado ou pausado
              indicadorParagrafo.textContent = `Última leitura: ${atual}/${total}`;
@@ -396,7 +395,7 @@ document.addEventListener('DOMContentLoaded', () => {
         atualizarBarraProgresso(); // Atualiza o indicador para mostrar "Última leitura"
     }
 
-    // CORREÇÃO: Função pararLeitura não zera mais os índices, a menos que resetarIndice seja true.
+    // A função pararLeitura(false) não zera mais os índices, mantendo a memória
     function pararLeitura(resetarIndice = false) {
         if (audioAtual) {
             audioAtual.pause();
@@ -416,15 +415,14 @@ document.addEventListener('DOMContentLoaded', () => {
         expandirCabecalho();
 
         if (resetarIndice) {
-            // Zera o progresso APENAS se estiver carregando um NOVO arquivo (chamado em exibirTexto)
+            // Zera o progresso APENAS ao carregar um novo arquivo
             indiceParagrafoAtual = 0;
             indiceChunkAtual = 0;
-            atualizarBarraProgresso();
-        } else {
-            // Se não for resetar (chamado pelo botão STOP), salva a posição atual
-            salvarProgresso();
-            atualizarBarraProgresso(); // Atualiza o indicador para mostrar "Última leitura"
         }
+        
+        // Salva a posição e atualiza o indicador, independentemente de ter zerado ou não
+        salvarProgresso();
+        atualizarBarraProgresso(); 
     }
 
     function lerProximoParagrafo() {
