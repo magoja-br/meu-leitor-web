@@ -36,16 +36,21 @@ header {
 
 /* Modo Leitura Compactado */
 .leitura-ativa {
+    /* MANTÉM: display flex para o layout geral */
     padding: 0.5rem 1rem;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column; /* NOVO: Para mobile, forçamos empilhar itens principais */
+    justify-content: center;
     align-items: center;
+    gap: 0.3rem; /* Espaçamento entre os itens empilhados */
 }
 
 .leitura-ativa h1 {
     font-size: 1.2rem;
-    text-align: left;
+    text-align: center; /* Centraliza o título no modo compacto */
     margin: 0;
+    width: 100%;
+    order: 0;
 }
 
 .leitura-ativa #header-controls {
@@ -54,6 +59,8 @@ header {
 
 .leitura-ativa .player-controls {
     margin-top: 0;
+    width: 100%; /* Ocupa a largura total para centralizar botões */
+    order: 2; /* Fica na parte inferior do cabeçalho compacto */
 }
 
 /* Estilo para o Indicador de Parágrafo */
@@ -69,9 +76,10 @@ header {
 
 .leitura-ativa .indicador-paragrafo {
     display: block;
-    order: 1; 
-    flex-grow: 1; 
+    order: 1; /* Fica entre o título e os controles */
+    flex-grow: 0; /* Remove o crescimento para manter o texto centralizado */
     text-align: center;
+    width: auto;
 }
 
 h1 { 
@@ -246,7 +254,7 @@ input[type="file"] {
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-/* Estilo para o botão 'Go' (pequeno) - Corrigido para sintaxe padrão */
+/* Estilo para o botão 'Go' (pequeno) */
 .player-button.ir-btn-custom {
     width: 30px; 
     height: 30px; 
@@ -307,27 +315,40 @@ footer {
         padding: 0.8rem 1rem;
     }
 
-    /* Ajuste para o modo leitura no mobile */
+    /* CORREÇÃO CRÍTICA: Força empilhamento vertical total no cabeçalho ativo */
     .leitura-ativa {
         padding: 0.5rem 0.5rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        flex-direction: column; 
+        gap: 0.2rem;
+    }
+
+    /* Garantir que o título e indicador fiquem centrados e na sua própria "linha" superior */
+    .leitura-ativa h1 {
+        font-size: 1.1rem;
+        text-align: center;
+        width: 100%;
     }
 
     .leitura-ativa .indicador-paragrafo {
         font-size: 0.8rem;
+        width: auto;
     }
     
+    /* Faz os controles do player ocuparem a largura total e centraliza os botões */
     .leitura-ativa .player-controls {
+        width: 100%;
         gap: 0.5rem;
+        justify-content: center;
+        margin-top: 0;
     }
-    
+
     .leitura-ativa .player-button {
         width: 40px;
         height: 40px;
         font-size: 1.1rem;
     }
+    
+    /* --- Controles em estado expandido (fora de leitura) --- */
 
     main { 
         margin: 1rem; 
@@ -337,7 +358,6 @@ footer {
         font-size: 1.2rem; 
     }
     
-    /* Força os controles do header para empilhar verticalmente e reduzir espaçamento */
     #header-controls {
         flex-direction: column;
         gap: 0.5rem;
